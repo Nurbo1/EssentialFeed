@@ -5,11 +5,10 @@
 //  Created by Нурбол Мухаметжан on 19.08.2025.
 //
 
-import Foundation
 import XCTest
 import EssentialFeed
 
-class RemoteFeedLoaderTests: XCTestCase {
+class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     
     func test_init_doesNotRequestDataFromURL() {
         let url = URL(string: "test.com")!
@@ -127,8 +126,8 @@ class RemoteFeedLoaderTests: XCTestCase {
         return .failure(error)
     }
     
-    private func makeItem(id: UUID, description: String? = nil, location: String? = nil, imageURL: URL) -> (model: FeedItem, json: [String: Any]){
-        let item = FeedItem(id: id, description: description, location: location, imageURL: imageURL)
+    private func makeItem(id: UUID, description: String? = nil, location: String? = nil, imageURL: URL) -> (model: FeedImage, json: [String: Any]){
+        let item = FeedImage(id: id, description: description, location: location, url: imageURL)
         
         let json: [String: Any] = [
             "id": id.uuidString,
