@@ -5,11 +5,10 @@
 //  Created by Нурбол Мухаметжан on 19.08.2025.
 //
 
-import Foundation
 import XCTest
 import EssentialFeed
 
-class RemoteFeedLoaderTests: XCTestCase {
+class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     
     func test_init_doesNotRequestDataFromURL() {
         let url = URL(string: "test.com")!
@@ -22,7 +21,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         let url = URL(string: "test.com")!
         let (sut, client) = makeSUT(url: url)
         
-        sut.load()
+        sut.load { _ in }
         
         XCTAssertEqual(client.requestedURLs, [url])
         
@@ -32,9 +31,9 @@ class RemoteFeedLoaderTests: XCTestCase {
         let url = URL(string: "test.com")!
         let (sut, client) = makeSUT(url: url)
         
-        sut.load()
-        sut.load()
-        
+        sut.load { _ in }
+        sut.load { _ in }
+
         XCTAssertEqual(client.requestedURLs, [url, url])
     }
     
@@ -62,10 +61,10 @@ class RemoteFeedLoaderTests: XCTestCase {
     func test_load_deliverErrorOnNon200HTTPResponseWithInvalidJSON() {
         let (sut, client) = makeSUT()
         
-        expect(sut, toCompleteWith: failure(.invalidData)) {
-            let invalidJSON = Data("invalid Json".utf8)
-            client.complete(withStatusCode: 200, data: invalidJSON)
-        }
+		expect(sut, toCompleteWith: failure(.invalidData)) {
+			let invalidJSON = Data("invalid json".utf8)
+			client.complete(withStatusCode: 200, data: invalidJSON)
+		}
     }
     
     func test_load_deliverErrorOnNon200HTTPResponseWithEmptyJSON() {
@@ -127,15 +126,15 @@ class RemoteFeedLoaderTests: XCTestCase {
         return .failure(error)
     }
     
-    private func makeItem(id: UUID, description: String? = nil, location: String? = nil, imageURL: URL) -> (model: FeedItem, json: [String: Any]){
-        let item = FeedItem(id: id, description: description, location: location, imageURL: imageURL)
+    private func makeItem(id: UUID, description: String? = nil, location: String? = nil, imageURL: URL) -> (model: FeedImage, json: [String: Any]){
+        let item = FeedImage(id: id, description: description, location: location, url: imageURL)
         
-        let json: [String: Any] = [
-            "id": id.uuidString,
-            "description": description,
-            "location": location,
-            "image": imageURL.absoluteString
-        ].compactMapValues { $0 }
+		let json: [String: Any] = [
+			"id": id.uuidString,
+			"description": description,
+			"location": location,
+			"image": imageURL.absoluteString
+		].compactMapValues { $0 }
         
         return (item, json)
     }
@@ -165,29 +164,29 @@ class RemoteFeedLoaderTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    private class HTTPClientSpy: HTTPClient {
-        private var messages = [(url: URL, completion: (HTTPClientResult) -> Void)]()
-        
-        var requestedURLs: [URL] {
-            return messages.map { $0.url }
-        }
-        
-        func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void) {
-            messages.append ((url, completion))
-        }
-        
-        func complete(with error: Error, at index: Int = 0){
-            messages[index].completion(.failure(error))
-        }
-        
-        func complete(withStatusCode: Int, data: Data = Data(), at index: Int = 0) {
-            let response = HTTPURLResponse(
-                url: requestedURLs[index],
-                statusCode: withStatusCode,
-                httpVersion: nil,
-                headerFields: nil
-            )!
-            messages[index].completion(.success(data, response))
-        }
-    }
+	private class HTTPClientSpy: HTTPClient {
+		private var messages = [(url: URL, completion: (HTTPClient.Result) -> Void)]()
+		
+		var requestedURLs: [URL] {
+			return messages.map { $0.url }
+		}
+		
+		func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) {
+			messages.append((url, completion))
+		}
+		
+		func complete(with error: Error, at index: Int = 0){
+			messages[index].completion(.failure(error))
+		}
+		
+		func complete(withStatusCode: Int, data: Data = Data(), at index: Int = 0) {
+			let response = HTTPURLResponse(
+				url: requestedURLs[index],
+				statusCode: withStatusCode,
+				httpVersion: nil,
+				headerFields: nil
+			)!
+			messages[index].completion(.success((data, response)))
+		}
+	}
 }

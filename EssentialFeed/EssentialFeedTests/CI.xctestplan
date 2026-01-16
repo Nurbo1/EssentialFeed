@@ -22,8 +22,22 @@
     {
       "target" : {
         "containerPath" : "container:EssentialFeed.xcodeproj",
+        "identifier" : "40BF040A2F1917EA00E86DAF",
+        "name" : "EssentialFeediOSTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:EssentialFeed.xcodeproj",
         "identifier" : "080EDEF921B6DA7E00813479",
         "name" : "EssentialFeedTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:EssentialFeed.xcodeproj",
+        "identifier" : "0832C67C22A0223A00E1C5E9",
+        "name" : "EssentialFeedCacheIntegrationTests"
       }
     }
   ],
