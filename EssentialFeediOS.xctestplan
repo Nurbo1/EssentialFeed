@@ -12,7 +12,13 @@
 
   },
   "testTargets" : [
-
+    {
+      "target" : {
+        "containerPath" : "container:EssentialFeed.xcodeproj",
+        "identifier" : "40BF040A2F1917EA00E86DAF",
+        "name" : "EssentialFeediOSTests"
+      }
+    }
   ],
   "version" : 1
 }
