@@ -1,3 +1,13 @@
+//
+//  FeedImageCellController.swift
+//  EssentialFeed
+//
+//  Created by Нурбол Мухаметжан on 02.02.2026.
+//
+
+import EssentialFeed
+import UIKit
+
 final class FeedImageCellController {
     private var task: FeedImageDataLoaderTask?
     private let model: FeedImage
@@ -38,7 +48,7 @@ final class FeedImageCellController {
         task = imageLoader.loadImageData(from: model.url) { _ in }
     }
     
-    deinit {
+    func cancelLoad() {
         task?.cancel()
     }
 }

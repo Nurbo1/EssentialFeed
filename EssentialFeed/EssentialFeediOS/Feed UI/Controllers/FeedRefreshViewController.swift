@@ -1,4 +1,12 @@
+//
+//  FeedRefreshViewController.swift
+//  EssentialFeed
+//
+//  Created by Нурбол Мухаметжан on 02.02.2026.
+//
 
+import UIKit
+import EssentialFeed
 
 public final class FeedRefreshViewController: NSObject {
     public lazy var view: UIRefreshControl = {
